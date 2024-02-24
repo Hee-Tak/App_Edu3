@@ -95,3 +95,10 @@ class MainActivity : AppCompatActivity() {
  *
  *
  */
+
+
+/**
+ * Network 정보 확인
+ *
+ *
+ */
