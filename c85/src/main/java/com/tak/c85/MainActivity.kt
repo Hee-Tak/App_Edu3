@@ -1,12 +1,44 @@
 package com.tak.c85
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        val resultView = findViewById<TextView>(R.id.resultView)
+        resultView.text = isNetworkAvailable()
+    }
+
+    private fun isNetworkAvailable() : String {
+        val manager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){ //마시멜로
+            val nw = manager.activeNetwork ?: return "offline"      //null 이면 offline 상태
+            val actNw = manager.getNetworkCapabilities(nw) ?: return "offline"
+
+            return when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                    return "wifi online"
+                }
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                    return "cellular online"
+                }
+                else -> "offline"
+            }
+        } else {
+            if(manager.activeNetworkInfo.isConnected ?: false){
+                return "online"
+            } else {
+                return "offline"
+            }
+        }
     }
 }
 
@@ -98,7 +130,34 @@ class MainActivity : AppCompatActivity() {
 
 
 /**
- * Network 정보 확인
+ * 85강) Network 정보 확인
+ *
+ * * 우리가 서버랑 네트워킹을 하기 위해서는 실제 서버에 커넥션을 맺고 데이터를 read/write 하는 프로그램이 당연히 필요하겠다만, 일반적으로는 서버랑 네트워킹을 시도하기 전에, 핸드폰의 네트웍 상태를 파악하는 것이 선행되어야 한다.
+ *
+ *
+ * <ConnectivityManager>
+ *
+ * - ConnectivityManager 을 이용해 네트웍 상태를 파악       (시스템 서비스)
+ *          <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+ *
+ *
+ * - ConnectivityManger 의 getActiveNetwork() 을 이용해 Network 객체 획득    (네트웍 정보가 담기는 객체)
+ * - Network 객체를 getNetworkCapabilities() 함수의 매개변수로 지정하면 현재 접속된 네트웍 망 정보를 획득가능
+ *
+ *          val nw = connectivityManager.activeNetwork
+ *          val actNw = connectivityManager.getNetworkCapabilities(nw)
+ *
+ *
+ * - hasTransport() 함수를 이용해 현재 폰에 와이파이에 접속된 상태인지 아니면 이통사망에 접속된 상태인지를 파악
+ *
+ *          actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+ *              return "wifi online"
+ *          }
+ *          actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+ *              return "cellular available"
+ *          }
+ *          //위에도 안걸리고, 밑에도 안걸리면 현재 데이터 통신을 위한 네트워킹이 안되는 상태라는 말 => Offline 상태다.
+ *
  *
  *
  */
