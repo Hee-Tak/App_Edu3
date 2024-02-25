@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.tak.c85"
+    namespace = "com.tak.c86"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.tak.c85"
+        applicationId = "com.tak.c86"
         minSdk = 26
         targetSdk = 33
         versionCode = 1

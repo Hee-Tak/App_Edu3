@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
                 else -> "offline"
             }
         } else {
-            if(manager.activeNetworkInfo.isConnected ?: false){
+            if(manager.activeNetworkInfo?.isConnected ?: false){
                 return "online"
             } else {
                 return "offline"
