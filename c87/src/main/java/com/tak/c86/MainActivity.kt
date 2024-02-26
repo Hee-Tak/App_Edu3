@@ -2,11 +2,64 @@ package com.tak.c86
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ListView
+import android.widget.SimpleAdapter
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
+
+    val retrofit: Retrofit
+        get() = Retrofit.Builder()
+            .baseUrl("https://reqres.in/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()    //위의 정보대로 Retrofit 객체를 build. Retrofit 객체가 준비 된거라고 보면 되겠지.
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        val listView = findViewById<ListView>(R.id.listView)
+        var networkService = retrofit.create(INetworkService::class.java)   //우리가 만든 인터페이스를 Retrofit에 알려줘서 그 인터페이스 정보대로 네트워킹을 하기 위한 객체를 얻기. //끝에 ::class.java 를 붙여주면서 등록해준다라고 표현했는데 그런건가 싶다.
+
+
+        //그러면 이제 이 인터페이스 객체의 함수를 콜 해줘야 한다.  아까 우리가 만든 함수를 그대로 콜해서 네트워킹이 가능한 콜객체를 받은거라고 보면 됨.
+        val call = networkService.doGetUserList("1")
+
+        //이 콜객체를 받은 다음에 enqueue하는 순간 네트워킹이 발생하는 순간. //그러면 네트워킹이 될거고, 결과값 콜백을 등록해줘야지 됨.
+        call.enqueue(object : Callback<UserListModel>{
+            override fun onResponse(call: Call<UserListModel>, response: Response<UserListModel>) { //정상적으로 서버 데이터가 넘어오는 순간에 콜되는 함수
+                //서버에서 네트워킹이 성공했고 정상적으로 데이터를 받았다는 것
+                val userList = response.body()             //그러면 우리가 만든 객체에 다 담겨져 있다. //이거 가지고 할일 하면됨. 여기 실습에서는 목록화면을 꾸미는 일이 되겠지
+
+                val mutableList = mutableListOf<Map<String, String>>()
+                userList?.data?.forEach{
+                    val map = mapOf("firstName" to it.firstName, "lastName" to it.lastName)         //데이터를, 목록 화면을 구성하기 위한 데이터를 List의 map 객체로. 이는 곧 SimpleAdapter 를 쓸 의도이다.
+                    mutableList.add(map)                                                            //우리가 사용하고자 하는 어댑터에서 요구하는 데이터를 구성하는 것.
+                }
+
+                val adapter = SimpleAdapter(                //어댑터 준비
+                    this@MainActivity,
+                    mutableList,
+                    android.R.layout.simple_list_item_2,
+                    arrayOf("firstName", "lastName"),
+                    intArrayOf(android.R.id.text1, android.R.id.text2)
+                )
+
+                listView.adapter = adapter                  //listView 에 대입                     //이렇게해서 listView에다가 서버에서 받은 데이터로 화면을 구성한 경우가 된다.
+            }
+
+            override fun onFailure(call: Call<UserListModel>, t: Throwable) {   //서버 연동에 실패 됐을 때 콜되는 함수
+                call.cancel()
+            }
+        })
+
     }
 }
 
@@ -183,8 +236,9 @@ class MainActivity : AppCompatActivity() {
  *         })
  *
  *
- *
+ * //라이브러리 등록은 build.gradle로 가서. dependencies 가서 implementation
  *
  *
  *
  */
+
