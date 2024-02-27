@@ -108,15 +108,16 @@ class MainActivity : AppCompatActivity() {
  *
  *
  *
- * - DataBinding                    //툴 베이스임. 라이브러리 dependency 관계 설정해줄 필요 x
+ * - DataBinding                    //툴 베이스임. 라이브러리 dependency 관계 설정해줄 필요 x     //dataBinding은 findViewById 를 줄이자! 에서 한층 더 나아가, 일종의 아키텍처 요소가 된다. -> 뷰와 관련되어있는 코드를 뷰가 등록된 xml에서 다 하자. 라는 것 => findViewById, data setting, event 등록 등
  *          android {               //build.gradle 파일에 데이터 바인딩 지원을 해달라고 이렇게 쓰면 됨. 그럼 이것에 의해서 많은 코드가 자동으로 만들어 짐.
  *              dataBinding {
  *                  enabled = true
  *              }
  *          }
  *
+ *
  *          <?xml version="1.0" encoding="utf-8" ?>
- *          <layout>
+ *          <layout>                                    //이 layout 태그로 전체 xml을 감싸는게 중요 (core. 필수 규칙.)
  *              <LinearLayout xmlns:android="https://schemas.android.com/apk/res/android">
  *                  <TextView
  *                      android:id="@+id/nameResultView"/>
@@ -126,10 +127,38 @@ class MainActivity : AppCompatActivity() {
  *          </layout>
  *
  *
+ *          class MainActivity : AppCompatActivity() {
+ *              override fun onCreate(savedInstanceState: Bundle?) {
+ *                  super.onCreate(savedInstanceState)
+ *                  val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)     //=> 데이터 바인딩 객체 준비 (ActivityMainBinding 이게 자동으로 generate 된 클래스. 기본적으로는 xml 파일 명으로 만들어짐. activity_main.xml => ActivityMainBinding : 이 클래스 내에 뷰와 관련된 코드가 자동으로 되어 있음.)
+ *                  binding.nameResultView.text = "hello world"
+ *                  binding.button.setOnClickListener{   }
+ *              }
+ *          }
+ *
+ *          //사실 만약 이렇게쓸려고한다면, ViewBinding 이 더 편하다고 한다.
+ *
+ *          //Activity 코드영역에서 업무로직이 실행되어 질것이고, 그럼 서버사이드와 네트워킹을 하든 뭘하든 여기서 데이터 발생.
+ *          //이 데이터를 원래 View 에 찍어야 하는데, 이 데이터를 xml에 넘겨서 xml에서 View 에 찍게끔.   => 그럴려면 xml에 받을 data가 하나 선언이 되어 있어야 한다. (변수 선언)
  *
  *
+ *          <data>
+ *              <variable
+ *                  name="user"                                         //변수명: user     (User 클래스 객체의 데이터)
+ *                  type="com.example.test_databinding.User"/>          //데이터 타입 : User 클래스 타입
+ *          <data>
  *
  *
+ *          <TextView
+ *              android:layout_width="match_parent"
+ *              android:layout_height="wrap_content"
+ *              android:text="@{user.name + '-' + user.address}"/>
+ *
+ *
+ *          val user = User("gildong", "seoul")     //데이터 준비
+ *          binding.user = user                     //binding 객체, 변수명 user 에다가 데이터 대입 => xml 로 넘어가서 xml에 찍힌다는 얘기
+ *
+ *          //결국 data -> view 이걸 xml에서 한다는 것. => 이럼 코드에서 findViewById 는 물론, 뷰 객체를 핸들링할 필요도 없다.
  *
  *
  */
