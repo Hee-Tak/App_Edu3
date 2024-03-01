@@ -2,11 +2,29 @@ package com.tak.c90
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import com.tak.c90.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+
+    //바인딩 객체 선언
+    lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        //바인딩 객체 얻기
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        //뷰 출력 (root view)
+        setContentView(binding.root)
+
+        binding.visibleBtn.setOnClickListener {
+            binding.targetView.visibility = View.VISIBLE
+        }
+        binding.invisibleBtn.setOnClickListener {
+            binding.targetView.visibility = View.INVISIBLE
+        }
     }
 }
 
@@ -169,4 +187,54 @@ class MainActivity : AppCompatActivity() {
  *
  * * 데이터 바인딩과 더불어서 뷰 바인딩이 구글에서 뷰를 핸들링하기 위해서 제시하고 있는 기법
  * * 구조적으로 봤을 때, 데이터 바인딩이 큰 프레임웍이고, 데이터 바인딩의 핵심 내용 중에서 일부분을 추출해서 뷰바인딩으로 하는 개념 정도.
+ *
+ * <ViewBinding>
+ *
+ * * ViewBinding 이 나오면서 Kotlin Android Extension 이라고 하는 기법이 deprecated 됐음.
+ * * DataBinding 은 아키텍처 요소고, 이 데이터 바인딩 중에서 뷰를 획득하는 부분만, 뷰 바인딩이다 라고 해서 따로 제공하는 거
+ *
+ * * 즉, 단순히 뷰를 획득해서 이용하는 측면에 도움만 받겠다고 하면, 뷰바인딩 이용.
+ * * 아예 아키텍처 요소로 이용하겠다라고 해서 뷰와 관련되어 있는 대부분의 코드를 xml 로 전환시키겠다. 코드에서 이런 작업을 하기 싫다. 라고 한다면 데이터 바인딩.
+ *
+ *
+ * * 뷰 바인딩도 기법이다. (라이브러리가 아니라.) -> 그래서 사용한다고 하면 build.gradle 파일에다가 (dependency 관계를 설정하는게 아니라) 뷰 바인딩을 쓸거야. 라고 등록만 해주면 된다.
+ *
+ * - XML 파일에 등록된 뷰 객체를 가지는 Binding 클래스가 generate (XML 파일에 등록된 뷰 객체를 가지는 바인딩 클래스가 자동으로 생성된다)
+ * - activity_main.xml -> ActivityMainBinding
+ *
+ *          android {
+ *              viewBinding {
+ *                  enabled = true
+ *              }                           //이렇게 등록해두면, 우리가 만들어 놓은 XML 에 해당하는 뷰를 핸들링하기 위한 코드가 자동으로 만들어 진다. => Binding 클래스 라고 부름.
+ *          }
+ *
+ *
+ *
+ * - Binding 클래스의 inflate 함수를 호출하면서 매개변수로 layoutInflater 를 전달하여 객체 획득.
+ * - Binding 객체의 root 프로퍼티에는 XML 루트 태그 객체.
+ *
+ *          val binding = ActivityMainBinding.inflate(LayoutInflater)       //LayoutInflater : XML 초기화 객체       //R.layout.activity_main 대신에 클래스명 ActivityMainBinding 에 xml 파일 정보가 있는 것.
+ *          //액티비티 화면 출력
+ *          setContentView(binding.root)            //root 객체 출력해주면 xml에 있는 화면대로 나옴.
+ *
+ *          //뷰 객체 이용
+ *          binding.visibleBtn.setOnClickListener {                 //visibleBtn : id 속성, View 객체명
+ *              binding.targetView.visibility = View.VISIBLE
+ *          }
+ *          binding.invisibleBtn.setOnClickListener {
+ *              binding.targetView.visibility = View.INVISIBLE
+ *          }
+ *
+ *
+ *
+ *
+ * - build.gradle 파일에 ViewBinding 이용하겠다고 선언을 하면 XML 하나당 Binding 클래스가 자동으로 generate
+ * - XML 파일을 위한 Binding 클래스가 만들어질 필요가 없는 경우 -> tools:viewBindingIgnore = "true" 로 선언
+ *
+ *          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ *              xmlns:tools="http://schemas.android.com/tools"
+ *              ..............
+ *              tools:viewBindingIgnore="true">             //툴 베이스 적인거니깐.
+ *
+ *
  */

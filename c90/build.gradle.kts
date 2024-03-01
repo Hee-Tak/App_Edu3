@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.tak.c90"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.tak.c90"
@@ -32,6 +32,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    viewBinding {
+        enable = true           //tool 이니까 여기다가 선언
     }
 }
 
