@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"/>  <!-- 수직 스크롤바를 활성화 -->
+
+<!-- 제일 먼저, RecyclerView 를 이용하려면 어댑터가 있어야 한다. -->
