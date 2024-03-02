@@ -2,11 +2,50 @@ package com.tak.c96
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
+import com.tak.c96.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var toggle: ActionBarDrawerToggle
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+
+        setSupportActionBar(binding.toolbar) //툴바 넣기
+
+        //xml 다 건들이고 코드까지 추가해주는 이유는, 토글 때문에. 토글을 넣어주는게 일반적
+
+
+        toggle = ActionBarDrawerToggle(this, binding.drawer, R.string.open, R.string.close) //토글 준비
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) //액션바
+        toggle.syncState()  //싱크
+
+    }
+
+
+    //메뉴 이벤트 처리 위한 함수 Override
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {   //원래 여기에다가 일반적인 메뉴 같은 우리 알고리즘을 타는데, 메뉴 이벤트 취급이 되니까, 이 함수가 콜 되긴하지만, 우리 알고리즘을 안타게끔 처리.
+        if(toggle.onOptionsItemSelected(item)){
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.menu_navigation, menu)
+
+        return super.onCreateOptionsMenu(menu)
     }
 }
 
