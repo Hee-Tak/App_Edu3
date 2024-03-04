@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.tak.c97"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.tak.c97"
