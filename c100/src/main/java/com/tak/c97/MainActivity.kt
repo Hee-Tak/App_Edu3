@@ -122,7 +122,13 @@ class MainActivity : AppCompatActivity() {
  *
  *
  *
- * 5 : 25 실습
+ * 마지막 시험 파트
+ *
+ * 1. 안드로이드의 주요 컴포넌트 -> Activity / Service / BroadcastReceiver
+ * 2. View 의 클릭 이벤트 시 자동으로 호출되는 이벤트 콜백함수명 -> onClick()
+ * 3. 메뉴를 XML 로 정의했다면 XML 을 적용시키기 위해 사용되는 클래스는? => MenuInflater
+ * 4. Intent 는 외부 앱의 컴포넌트를 실행시키기 위해 사용할 수 없다.? => X
+ * 5. Activity 를 실행시키기 위해서 intent 를 발생시키는 함수는? => startActivity
  *
  *
  */
